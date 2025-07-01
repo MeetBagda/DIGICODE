@@ -1,5 +1,11 @@
-import { GoogleMap, LoadScript, Marker, Rectangle } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  Rectangle,
+} from "@react-google-maps/api";
 import { useState } from "react";
+import GridLayer from "./GridLayer";
 
 const containerStyle = {
   width: "100%",
@@ -16,7 +22,6 @@ type Props = {
   lng: number;
   onMapClick: (lat: number, lng: number) => void;
 };
-
 
 const gridSize = 0.000027; // ~3 meters in degrees
 
@@ -41,7 +46,16 @@ const Map = ({ lat, lng, onMapClick }: Props) => {
         }}
       >
         <Marker position={{ lat, lng }} />
-        <Rectangle bounds={bounds} options={{ strokeColor: "#FF0000", strokeOpacity: 0.8, strokeWeight: 1, fillOpacity: 0 }} />
+        <Rectangle
+          bounds={bounds}
+          options={{
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillOpacity: 0,
+          }}
+        />
+        <GridLayer />
       </GoogleMap>
     </LoadScript>
   );
