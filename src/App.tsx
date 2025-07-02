@@ -19,6 +19,8 @@ export default function App() {
       <LeftPanel
         onSearch={(lat, lng) => setCoords({ lat, lng })}
         currentCoords={coords}
+        threeWords={threeWords}
+        onWordsSearch={setThreeWords}
       />
 
       <Toaster position="bottom-right" richColors />
