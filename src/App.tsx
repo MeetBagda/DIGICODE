@@ -12,11 +12,13 @@ export default function App() {
       <Map
         onWordsChange={setThreeWords}
         externalCoords={coords}
+        onCoordsChange={(lat, lng) => setCoords({ lat, lng })}
       />
 
       {/* Floating input panel (bottom-left) */}
       <LeftPanel
         onSearch={(lat, lng) => setCoords({ lat, lng })}
+        currentCoords={coords}
       />
 
       <Toaster position="bottom-right" richColors />

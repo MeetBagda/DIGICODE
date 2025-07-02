@@ -6,6 +6,7 @@ import { encodeLatLngToWords } from "@/lib/wordEncoding";
 type MapProps = {
   onWordsChange: (words: string) => void;
   externalCoords: { lat: number; lng: number };
+  onCoordsChange?: (lat: number, lng: number) => void;
 };
 
 const containerStyle = {
@@ -13,14 +14,9 @@ const containerStyle = {
   height: "100vh",
 };
 
-const initialPosition = {
-  lat: 22.2887,
-  lng: 70.7757,
-};
-
 const gridSize = 0.000027; // ~3m in degrees
 
-const Map = ({ onWordsChange, externalCoords }: MapProps) => {
+const Map = ({ onWordsChange, externalCoords, onCoordsChange }: MapProps) => {
   const [position, setPosition] = useState(externalCoords);
 
     useEffect(() => {
@@ -48,7 +44,9 @@ const Map = ({ onWordsChange, externalCoords }: MapProps) => {
         mapTypeId="roadmap"
         onClick={(e) => {
           if (e.latLng) {
-            setPosition({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+            const newPos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+            setPosition(newPos);
+            onCoordsChange?.(newPos.lat, newPos.lng);
           }
         }}
       >
