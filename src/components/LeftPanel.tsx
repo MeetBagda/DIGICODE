@@ -14,32 +14,23 @@ type Props = {
 };
 
 export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }: Props) => {
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
-  const [word1, setWord1] = useState("");
-  const [word2, setWord2] = useState("");
-  const [word3, setWord3] = useState("");
+  const [coordsInput, setCoordsInput] = useState("");
+  const [wordsInput, setWordsInput] = useState("");
 
   // Update input fields when currentCoords change (from map interactions)
   useEffect(() => {
-    setLat(currentCoords.lat.toFixed(6));
-    setLng(currentCoords.lng.toFixed(6));
+    const formattedCoords = `${currentCoords.lat.toFixed(6)}, ${currentCoords.lng.toFixed(6)}`;
+    setCoordsInput(formattedCoords);
   }, [currentCoords]);
 
-  // Update three words when threeWords prop changes
+  // Update three words input when threeWords prop changes
   useEffect(() => {
-    const words = threeWords.split('.');
-    if (words.length === 3) {
-      setWord1(words[0]);
-      setWord2(words[1]);
-      setWord3(words[2]);
-    }
+    setWordsInput(threeWords);
   }, [threeWords]);
 
   const copyCoordinates = async () => {
-    const coordsText = `${lat}, ${lng}`;
     try {
-      await navigator.clipboard.writeText(coordsText);
+      await navigator.clipboard.writeText(coordsInput);
       toast.success("Coordinates copied to clipboard!");
     } catch (err) {
       toast.error("Failed to copy coordinates");
@@ -47,22 +38,42 @@ export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }
   };
 
   const copyThreeWords = async () => {
-    const wordsText = `${word1}.${word2}.${word3}`;
     try {
-      await navigator.clipboard.writeText(wordsText);
+      await navigator.clipboard.writeText(wordsInput);
       toast.success("Three words copied to clipboard!");
     } catch (err) {
       toast.error("Failed to copy three words");
     }
   };
 
+  const searchByCoordinates = () => {
+    // Parse format: "22.288783, 70.775314"
+    const coords = coordsInput.split(',').map(coord => coord.trim());
+    if (coords.length === 2) {
+      const latNum = parseFloat(coords[0]);
+      const lngNum = parseFloat(coords[1]);
+      if (!isNaN(latNum) && !isNaN(lngNum)) {
+        onSearch(latNum, lngNum);
+        return;
+      }
+    }
+    toast.error("Invalid coordinate format. Use: lat, lng (e.g., 22.288783, 70.775314)");
+  };
+
   const searchByWords = () => {
-    const coords = decodeWordsToLatLng(word1, word2, word3);
-    if (coords) {
-      onSearch(coords.lat, coords.lng);
-      onWordsSearch(`${word1}.${word2}.${word3}`);
-    } else {
+    // Parse format: "word1.word2.word3"
+    const words = wordsInput.split('.');
+    if (words.length === 3 && words.every(word => word.trim().length > 0)) {
+      const [w1, w2, w3] = words.map(word => word.trim());
+      const coords = decodeWordsToLatLng(w1, w2, w3);
+      if (coords) {
+        onSearch(coords.lat, coords.lng);
+        onWordsSearch(`${w1}.${w2}.${w3}`);
+        return;
+      }
       toast.error("Invalid words entered");
+    } else {
+      toast.error("Invalid word format. Use: word1.word2.word3 (e.g., cat.wire.hobby)");
     }
   };
 
@@ -72,17 +83,14 @@ export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }
         {/* Coordinates Section */}
         <div className="space-y-3">
           <p className="font-semibold text-lg">Enter Coordinates</p>
-          <Input placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} />
-          <Input placeholder="Longitude" value={lng} onChange={(e) => setLng(e.target.value)} />
+          <Input 
+            placeholder="lat, lng (e.g., 22.288783, 70.775314)" 
+            value={coordsInput} 
+            onChange={(e) => setCoordsInput(e.target.value)} 
+          />
           <div className="flex gap-2">
             <Button
-              onClick={() => {
-                const latNum = parseFloat(lat);
-                const lngNum = parseFloat(lng);
-                if (!isNaN(latNum) && !isNaN(lngNum)) {
-                  onSearch(latNum, lngNum);
-                }
-              }}
+              onClick={searchByCoordinates}
               className="flex-1"
             >
               Locate
@@ -103,11 +111,11 @@ export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }
         {/* Three Words Section */}
         <div className="space-y-3">
           <p className="font-semibold text-lg">Enter Three Words</p>
-          <div className="flex gap-2">
-            <Input placeholder="Word 1" value={word1} onChange={(e) => setWord1(e.target.value)} />
-            <Input placeholder="Word 2" value={word2} onChange={(e) => setWord2(e.target.value)} />
-            <Input placeholder="Word 3" value={word3} onChange={(e) => setWord3(e.target.value)} />
-          </div>
+          <Input 
+            placeholder="word1.word2.word3 (e.g., cat.wire.hobby)" 
+            value={wordsInput} 
+            onChange={(e) => setWordsInput(e.target.value)} 
+          />
           <div className="flex gap-2">
             <Button
               onClick={searchByWords}
