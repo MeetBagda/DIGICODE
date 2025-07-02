@@ -13,7 +13,7 @@ export const LeftPanel = ({ onSearch }: Props) => {
   const [lng, setLng] = useState("");
 
   return (
-    <Card className="absolute top-5 left-5 z-10 w-80 shadow-xl">
+    <Card className="absolute bottom-5 left-5 z-10 w-80 shadow-xl">
       <CardContent className="p-4 space-y-3">
         <p className="font-semibold text-lg">Enter Coordinates</p>
         <Input placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} />

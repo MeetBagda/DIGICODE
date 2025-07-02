@@ -1,51 +1,58 @@
-import {
-  GoogleMap,
-  LoadScript,
-  Marker,
-  Rectangle,
-} from "@react-google-maps/api";
-import { useState } from "react";
+import { GoogleMap, LoadScript, Marker, Rectangle } from "@react-google-maps/api";
+import { useEffect, useState } from "react";
 import GridLayer from "./GridLayer";
+import { encodeLatLngToWords } from "@/lib/wordEncoding";
+
+type MapProps = {
+  onWordsChange: (words: string) => void;
+  externalCoords: { lat: number; lng: number };
+};
 
 const containerStyle = {
   width: "100%",
   height: "100vh",
 };
 
-const center = {
+const initialPosition = {
   lat: 22.2887,
   lng: 70.7757,
 };
 
-type Props = {
-  lat: number;
-  lng: number;
-  onMapClick: (lat: number, lng: number) => void;
-};
+const gridSize = 0.000027; // ~3m in degrees
 
-const gridSize = 0.000027; // ~3 meters in degrees
+const Map = ({ onWordsChange, externalCoords }: MapProps) => {
+  const [position, setPosition] = useState(externalCoords);
 
-const Map = ({ lat, lng, onMapClick }: Props) => {
+    useEffect(() => {
+    setPosition(externalCoords);
+  }, [externalCoords]);
+  
   const bounds = {
-    north: lat + gridSize,
-    south: lat,
-    east: lng + gridSize,
-    west: lng,
+    north: position.lat + gridSize,
+    south: position.lat,
+    east: position.lng + gridSize,
+    west: position.lng,
   };
+
+  useEffect(() => {
+    const [w1, w2, w3] = encodeLatLngToWords(position.lat, position.lng);
+    onWordsChange(`${w1}.${w2}.${w3}`);
+  }, [position, onWordsChange]);
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={{ lat, lng }}
+        center={position}
         zoom={20}
+        mapTypeId="roadmap"
         onClick={(e) => {
           if (e.latLng) {
-            onMapClick(e.latLng.lat(), e.latLng.lng());
+            setPosition({ lat: e.latLng.lat(), lng: e.latLng.lng() });
           }
         }}
       >
-        <Marker position={{ lat, lng }} />
+        <Marker position={position} />
         <Rectangle
           bounds={bounds}
           options={{

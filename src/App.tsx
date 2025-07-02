@@ -1,24 +1,25 @@
-// File: src/App.tsx
 import { useState } from "react";
-import Map from "./components/Map";
-import { LeftPanel } from "./components/LeftPanel";
+import Map from "@/components/Map";
+import { LeftPanel } from "@/components/LeftPanel";
+import { Toaster } from "sonner";
 
-function App() {
-  const [lat, setLat] = useState(22.2887);
-  const [lng, setLng] = useState(70.7757);
+export default function App() {
+  const [threeWords, setThreeWords] = useState("");
+  const [coords, setCoords] = useState({ lat: 22.2887, lng: 70.7757 });
 
   return (
-    <div className="relative">
-      <Map lat={lat} lng={lng} onMapClick={(newLat:any, newLng:any) => {
-        setLat(newLat);
-        setLng(newLng);
-      }} />
-      <LeftPanel onSearch={(newLat, newLng) => {
-        setLat(newLat);
-        setLng(newLng);
-      }} />
+    <div className="relative w-full h-screen">
+      <Map
+        onWordsChange={setThreeWords}
+        externalCoords={coords}
+      />
+
+      {/* Floating input panel (bottom-left) */}
+      <LeftPanel
+        onSearch={(lat, lng) => setCoords({ lat, lng })}
+      />
+
+      <Toaster position="bottom-right" richColors />
     </div>
   );
 }
-
-export default App;
