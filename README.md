@@ -1,5 +1,7 @@
 # DIGICODE
 
+https://github.com/user-attachments/assets/6a6f6fa5-6c9e-472c-9f05-9f4dbf2e90f4
+
 A location encoding system that assigns three unique words to pinpoint any location on the Indian map with 3-meter grid accuracy. This project combines the concepts of what3words and DIGIPIN to provide exact addresses using just 3 words.
 
 ## 🎯 Project Overview
