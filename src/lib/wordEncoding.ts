@@ -1,5 +1,4 @@
-// File: src/lib/wordEncoding.ts
-import { WORDS } from "./wordlist";
+import { WORDS } from "./wordlist_curated";
 
 const GRID_SIZE = 0.000027; // ~3m grid in degrees
 const LAT_MIN = 6.5; // Southernmost point of India
