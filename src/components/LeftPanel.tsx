@@ -1,4 +1,3 @@
-// File: src/components/LeftPanel.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,13 +16,11 @@ export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }
   const [coordsInput, setCoordsInput] = useState("");
   const [wordsInput, setWordsInput] = useState("");
 
-  // Update input fields when currentCoords change (from map interactions)
   useEffect(() => {
     const formattedCoords = `${currentCoords.lat.toFixed(6)}, ${currentCoords.lng.toFixed(6)}`;
     setCoordsInput(formattedCoords);
   }, [currentCoords]);
 
-  // Update three words input when threeWords prop changes
   useEffect(() => {
     setWordsInput(threeWords);
   }, [threeWords]);
@@ -63,9 +60,12 @@ export const LeftPanel = ({ onSearch, currentCoords, threeWords, onWordsSearch }
   const searchByWords = () => {
     // Parse format: "word1.word2.word3"
     const words = wordsInput.split('.');
+    
     if (words.length === 3 && words.every(word => word.trim().length > 0)) {
       const [w1, w2, w3] = words.map(word => word.trim());
+      
       const coords = decodeWordsToLatLng(w1, w2, w3);
+      
       if (coords) {
         onSearch(coords.lat, coords.lng);
         onWordsSearch(`${w1}.${w2}.${w3}`);

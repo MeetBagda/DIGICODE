@@ -1,4 +1,3 @@
-// File: src/components/GridLayer.tsx
 import { Rectangle, useGoogleMap } from "@react-google-maps/api";
 import { useEffect, useState } from "react";
 
@@ -68,7 +67,7 @@ const GridLayer = () => {
             clickable: false, 
             draggable: false,
             editable: false,
-            zIndex: 1, // send below marker
+            zIndex: 1,
           }}
         />
       ))}
