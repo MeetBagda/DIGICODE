@@ -1,7 +1,6 @@
 import { Rectangle, useGoogleMap } from "@react-google-maps/api";
 import { useEffect, useState } from "react";
 
-const GRID_SIZE_METERS = 3;
 const LAT_STEP = 0.000027;
 
 type Grid = {
